@@ -1,0 +1,337 @@
+========== C:\Users\mohamed\Desktop\nexus_intelligence ==========
+
+SOURCE FILES:
+
+
+API ROUTES:
+
+UI NAVIGATION:
+
+SOURCE HASHES:
+File               Length
+----               ------
+\db.cjs              1289
+\server.cjs         12370
+\desktop\main.cjs    1755
+\public\app.js      26057
+\public\index.html  14904
+\public\style.css   25798
+\server.cjs: app.get("/api/health", (_req,res) => res.json({ok:true,app:"NEXUS INTELLIGENCE",mode:"local-first",version:"3.0.0"}));
+\server.cjs: app.get("/api/auth/status", (_req,res) => res.json({setupRequired:db.prepare("SELECT COUNT(*) AS n FROM users").get().n===0}));
+\server.cjs: app.post("/api/auth/setup", (req,res) => {
+\server.cjs: app.post("/api/auth/login", (req,res) => {
+\server.cjs: app.post("/api/auth/logout", auth, (req,res) => {
+\server.cjs: app.get("/api/dashboard", auth, (_req,res) => {
+\server.cjs: app.get("/api/scope", auth, (_req,res) => res.json({items:readScope()}));
+\server.cjs: app.post("/api/scope", auth, (req,res) => {
+\server.cjs: app.delete("/api/scope/:id", auth, (req,res) => {
+\server.cjs: app.get("/api/cases", auth, (_req,res) => res.json({items:db.prepare("SELECT id,title,notes,created_at AS createdAt,updated_at AS updatedAt FROM cases ORDER BY created_at DESC").all()}));
+\server.cjs: app.post("/api/cases", auth, (req,res) => {
+\server.cjs: app.delete("/api/cases/:id", auth, (req,res) => {
+\server.cjs: app.post("/api/findings", auth, (req,res) => {
+\server.cjs: app.get("/api/findings", auth, (_req,res) => res.json({items:db.prepare("SELECT id,case_id AS caseId,kind,target,payload,created_at AS createdAt FROM findings ORDER BY created_at DESC LIMIT 200").all().map(x=>({...x,payload:JSON.parse(x.payload)}))}));
+\server.cjs: app.get("/api/audit", auth, (_req,res) => res.json({items:db.prepare("SELECT action,target,detail,created_at AS createdAt FROM audit_log ORDER BY id DESC LIMIT 300").all()}));
+\server.cjs: app.post("/api/dns", auth, async (req,res) => {
+\server.cjs: app.post("/api/rdap", auth, async (req,res) => {
+\server.cjs: app.post("/api/tls", auth, async (req,res) => {
+\server.cjs: app.post("/api/metadata", auth, upload.single("file"), (req,res) => {
+\public\app.js: function showView(id){$$(".view").forEach(v=>v.classList.toggle("hidden",v.id!==id));$$(".nav").forEach(n=>n.classList.toggle("active",n.dataset.view===id));$("#pageName").textContent=({overview:"Overview",domain:"Domain intelligence",ip:"IP / RDAP lookup",tls:"TLS certificate",metadata:"File metadata",cases:"Case manager",scope:"Scope manager",reports:"Report center",research:"Public research",audit:"Audit log",social:"Social intelligence"})[id];window.scrollTo(0,0)}
+\public\app.js: function renderRecords(target,data){target.classList.remove("empty");target.innerHTML=`<div class="result-head"><b>Lookup results</b><span>${escapeHtml(data.checkedAt||"")}</span></div><div class="record-grid">${Object.entries(data.records||{}).map(([k,v])=>`<div class="record"><label>${escapeHtml(k)}</label><pre>${escapeHtml(JSON.stringify(v,null,2))}</pre></div>`).join("")}</div><button class="secondary export-one">Export JSON</button>`;target.querySelector(".export-one").onclick=()=>download(JSON.stringify(data,null,2),"nexus-dns-result.json","application/json")}
+\public\app.js: function renderKv(target,data){target.classList.remove("empty");target.innerHTML=`<div class="result-head"><b>Lookup results</b><span>${escapeHtml(data.checkedAt||"")}</span></div>${Object.entries(data).filter(([k])=>k!=="checkedAt").map(([k,v])=>`<div class="kv"><span>${escapeHtml(k)}</span><b>${escapeHtml(typeof v==="object"?JSON.stringify(v):v??"—")}</b></div>`).join("")}<button class="secondary export-one">Export JSON</button>`;target.querySelector(".export-one").onclick=()=>download(JSON.stringify(data,null,2),"nexus-result.json","application/json")}
+\public\app.js: base.privacyNote="No image bytes were uploaded or retained by the server.";box.innerHTML=`<div class="result-head"><b>Local file details</b><span>PROCESSED IN BROWSER</span></div>${Object.entries(base).map(([k,v])=>`<div class="kv"><span>${escapeHtml(k)}</span><b>${escapeHtml(v)}</b></div>`).join("")}<button class="secondary" id="metaExport">Export details</button>`;$("#metaExport").onclick=()=>download(JSON.stringify(base,null,2),"nexus-file-metadata.json","application/json")}catch(err){box.textContent="Could not inspect this file."}};
+\public\app.js: $("#caseExport").onclick=()=>download(JSON.stringify(cases,null,2),"nexus-cases.json","application/json");
+\public\app.js: ["Scope manager","scope","⌖"],["Report center","reports","▥"],["Public research","research","⌕"],["Social intelligence","social","◎"],["Audit log","audit","≋"]
+\public\app.js: // NEXUS V5 Social Intelligence: public search-link builder for authorized self-audits.
+\public\app.js: const socialPlatforms = [
+\public\app.js: ["Instagram","Photo & video","instagram.com"],["Facebook","Social network","facebook.com"],["X","Microblogging","x.com"],["Threads","Social network","threads.net"],["TikTok","Short video","tiktok.com"],
+\public\app.js: ["Mastodon","Decentralized social","mastodon.social"],["Bluesky","Social network","bsky.app"],["Tumblr","Blogging","tumblr.com"],["Medium","Publishing","medium.com"],["Substack","Publishing","substack.com"],
+\public\app.js: ["Behance","Creative portfolio","behance.net"],["Dribbble","Creative portfolio","dribbble.com"],["DeviantArt","Art community","deviantart.com"],["ArtStation","Creative portfolio","artstation.com"],["500px","Photography","500px.com"],
+\public\app.js: ["Flickr","Photography","flickr.com"],["Vimeo","Video","vimeo.com"],["SoundCloud","Audio","soundcloud.com"],["Bandcamp","Music","bandcamp.com"],["Mixcloud","Audio","mixcloud.com"],
+\public\app.js: ["Last.fm","Music","last.fm"],["Discogs","Music catalog","discogs.com"],["Letterboxd","Film community","letterboxd.com"],["Goodreads","Books","goodreads.com"],["StoryGraph","Books","thestorygraph.com"],
+\public\app.js: ["Society6","Creator marketplace","society6.com"],["VK","Social network","vk.com"],["Odnoklassniki","Social network","ok.ru"],["Weibo","Social network","weibo.com"],["Bilibili","Video community","bilibili.com"],
+\public\app.js: ["FC2","Blogging","fc2.com"],["Qiita","Developer","qiita.com"],["Zenn","Developer","zenn.dev"],["Qzone","Social network","qzone.qq.com"],["Telegram","Messaging profiles","t.me"],
+\public\app.js: ["Discord","Community","discord.com"],["LINE","Messaging","line.me"],["KakaoStory","Social network","story.kakao.com"],["Kakao Brunch","Publishing","brunch.co.kr"],["WeChat Channels","Social video","channels.weixin.qq.com"],
+\public\app.js: const socialCatalog = socialPlatforms.slice(0,100);
+\public\app.js: function renderSocialResults(query=""){
+\public\app.js: const rootEl=$("#socialResults");if(!rootEl)return;
+\public\app.js: const filtered=socialCatalog.filter(p=>(p[0]+" "+p[1]+" "+p[2]).toLowerCase().includes(q));
+\public\app.js: $("#socialCount").textContent=`${filtered.length} / 100 platforms`;
+\public\app.js: const username=(window.nexusSocialUsername||"").replace(/^@/,"");
+\public\app.js: return `<a class="social-platform" href="${queryUrl}" target="_blank" rel="noopener noreferrer"><span class="social-platform-icon">◎</span><span class="social-platform-info"><b>${escapeHtml(name)}</b><small>${escapeHtml(category)}</small></span><span class="social-domain">${escapeHtml(domain)}</span><span class="social-open">↗</span></a>`;
+\public\app.js: $("#socialRun")?.addEventListener("click",()=>{
+\public\app.js: const username=$("#socialUsername").value.trim().replace(/^@/,"");
+\public\app.js: if(!$("#socialConsent").checked){toast("Confirm that this is your username or you have permission.");return}
+\public\app.js: window.nexusSocialUsername=username;
+\public\app.js: renderSocialResults($("#socialFilter").value);
+\public\app.js: $("#socialFilter")?.addEventListener("input",e=>renderSocialResults(e.target.value));
+\public\index.html: <aside class="sidebar">
+\public\index.html: <button class="nav" data-view="social"><i>◎</i> Social intelligence</button>
+\public\index.html: <div class="sidebar-bottom">
+\public\index.html: <button class="module" data-go="cases"><span class="module-icon">▤</span><b>Case manager</b><small>Save notes and export findings</small><span class="arrow">↗</span></button>
+\public\index.html: <div class="page-intro"><div class="eyebrow">MODULE 05 / WORKSPACE</div><h1>Case manager</h1><p>Keep research notes locally and export a portable report.</p></div>
+\public\index.html: <div class="tool-card"><label>NEW CASE</label><div class="input-row"><input id="caseTitle" placeholder="Case title"><button class="primary" id="caseAdd">Create case <span>＋</span></button></div><textarea id="caseNotes" placeholder="Notes, scope, authorization reference, observations..." rows="4"></textarea><div class="case-actions"><button class="secondary" id="caseExport">Export all cases (.json)</button><button class="secondary" id="caseTxt">Export summary (.txt)</button></div></div>
+\public\index.html: <div class="view hidden" id="social">
+\public\index.html: <div class="page-intro"><div class="eyebrow">MODULE 10 / SOCIAL INTELLIGENCE</div><h1>Social intelligence</h1><p>Build public search links for a username you own or are authorized to audit. NEXUS opens search pages; it does not verify, scrape, or enumerate private accounts.</p></div>
+\public\index.html: <div class="tool-card social-search-card">
+\public\index.html: <div class="input-row"><input id="socialUsername" placeholder="your_username" autocomplete="off" maxlength="64"><button class="primary" id="socialRun">Prepare 100 searches ↗</button></div>
+\public\index.html: <label class="confirm-line"><input type="checkbox" id="socialConsent"> I am checking my own username or have the account owner's permission.</label>
+\public\index.html: <div class="social-privacy"><b><span>ⓘ</span> Privacy boundary</b><p>Email and phone reverse-lookups are not supported. NEXUS will not test whether a private email address or phone number is registered on social networks, recover hidden account associations, or bypass platform privacy controls.</p></div>
+\public\index.html: <div class="social-toolbar"><div><b id="socialCount">100 platforms</b><small>Public web search links · no automated scraping</small></div><input id="socialFilter" placeholder="Filter platforms…" aria-label="Filter platforms"></div>
+\public\index.html: <div id="socialResults" class="social-grid"><div class="results empty">Enter a username and confirm authorization to prepare public search links.</div></div>
+\public\index.html: <button class="dock-app" data-go="social" title="Social intelligence"><span>◎</span><small>Social</small></button>
+db.cjs | 10F735BC4225787AB518395BD6E5E1BC6FE38B51770D594B9167A8DC649D266B
+server.cjs | 727091D071B3DB0625B8AB3773AFBD961EC301B86EFD3D86BA593884A8103D8A
+main.cjs | 0268EE3E839C75FF90D30E5A0ACBF89F242F5069AE85541B53F07FB059BD9AC0
+app.js | 91F356CEA86F0381E2A4A2F35FA18C2899BFB73B20FDD76D6D4D7055DF470F80
+index.html | 6EF5677E7FEC7E02EFD330DA2A9F180E99B90B261219EA219652C8AF0DA37786
+style.css | 18E182DFB381C483774F70F4C7852A2216CEA77A70B38723E206158BAABE1B72
+
+========== C:\Users\mohamed\Desktop\NEXUS_INTELLIGENCE_v5_5 ==========
+
+SOURCE FILES:
+\server.cjs          7032
+\public\app.js      24236
+\public\index.html   4542
+\public\style.css   10202
+
+API ROUTES:
+\server.cjs: app.post('/api/auth/register',authLimiter,async(req,res)=>{
+\server.cjs: app.post('/api/auth/login',authLimiter,async(req,res)=>{
+\server.cjs: app.get('/api/auth/me',requireAuth,(req,res)=>{
+\server.cjs: app.post('/api/auth/logout',requireAuth,(req,res)=>req.session.destroy(err=>{res.clearCookie('nexus.sid',{httpOnly:true,sameSite:'strict'});if(err)return res.status(500).json({error:'Could not sign out.'});res.json({ok:true})}));
+\server.cjs: app.get('/api/workspace',requireAuth,(req,res)=>{
+\server.cjs: app.put('/api/workspace',requireAuth,(req,res)=>{
+\server.cjs: app.get('/api/admin/overview',requireAuth,requireAdmin,(req,res)=>{
+\server.cjs: app.get('*',(req,res)=>res.sendFile(path.join(__dirname,'public/index.html')));
+
+UI NAVIGATION:
+\public\app.js: function initCase(){if(!db.cases.length){const c={id:uid(),name:'My first investigation',description:'A workspace for verified public-source research.',created:new Date().toISOString(),entities:[],findings:[],links:[]};db.cases.push(c);active=c.id;save()}}
+\public\app.js: cases:['WORKSPACE MANAGEMENT','Investigation Cases','Keep each research scope independent and organized.'],
+\public\app.js: graph:['RELATIONSHIP INTELLIGENCE','Relationship Graph','Visualize only relationships supported by recorded public evidence.'],
+\public\app.js: analytics:['OPERATIONAL METRICS','Analytics Dashboard','A snapshot of coverage, evidence quality, and case activity.'],
+\public\app.js: settings:['SYSTEM & DATA','Data & Export','Back up or export your workspace.'],
+\public\app.js: $('#modalTitle').textContent={case:'Create investigation case',entity:'Add verified public entity',finding:'Record public-source finding',link:'Add evidence-backed relationship'}[type];
+\public\app.js: overview:()=>overview(c),cases:()=>casesView(),entities:()=>entitiesView(c),findings:()=>findingsView(c),graph:()=>graphView(c),analysis:()=>analysisView(c),analytics:()=>analyticsView(c),settings:()=>settingsView(),admin:()=>adminView()
+\public\app.js: }[view];$('#view').innerHTML=v();$$('[data-add]').forEach(b=>b.onclick=()=>openModal(b.dataset.add));$$('[data-delete]').forEach(b=>b.onclick=()=>removeRecord(b.dataset.delete,b.dataset.id));$$('[data-export]').forEach(b=>b.onclick=()=>exportData(b.dataset.export));if(view==='admin')loadAdmin();let analyze=$('#runAnalysis');if(analyze)analyze.onclick=()=>{$('#analysisResult').textContent=analyzeCase(c);};
+\public\app.js: function casesView(){return `<div class="toolbar">${addBtn('Create case','case')}</div><div class="card"><div class="section-title"><h3>All investigation cases</h3><span>${db.cases.length} WORKSPACES</span></div><div class="list">${db.cases.map(c=>`<div class="list-row"><div class="dot-icon">▤</div><div><b>${esc(c.name)}</b><small>${esc(c.description||'No description')} · ${c.entities.length} entities · ${c.findings.length} findings</small></div><button class="mini-btn right" data-open-case="${c.id}">Open</button><button class="mini-btn" data-delete="case" data-id="${c.id}">Delete</button></div>`).join('')}</div></div>`}
+\public\app.js: function graphView(c){let n=c.entities.length;if(!n)return `<div class="toolbar">${addBtn('Add verified entity','entity')}</div><div class="card graph-card">${empty('Add verified entities, then record evidence-backed links to build the graph.')}</div>`;
+\public\app.js: return `<div class="toolbar">${addBtn('Add entity','entity')}${addBtn('Add relationship','link')}</div><div class="card graph-card"><div class="section-title"><h3>Verified relationship map</h3><span>${c.entities.length} NODES · ${c.links.length} LINKS</span></div><svg class="graph-svg" viewBox="0 0 840 340" role="img" aria-label="Relationship graph">${lines}${nodes}</svg><p class="muted" style="font-size:10px">Edges represent manually verified public-source relationships. Hover nodes or lines for details.</p></div><div class="card" style="margin-top:14px"><div class="section-title"><h3>Documented connections</h3><span>WITH SOURCE</span></div>${c.links.length?`<div class="list">${c.links.map(l=>`<div class="list-row"><div class="dot-icon">↔</div><div><b>${esc(c.entities.find(e=>e.id===l.from)?.name||'Unknown')} ↔ ${esc(c.entities.find(e=>e.id===l.to)?.name||'Unknown')}</b><small>${esc(l.label)}</small></div><a class="right" href="${esc(l.evidence)}" target="_blank" rel="noopener">Evidence ↗</a><button class="mini-btn" data-delete="link" data-id="${l.id}">Remove</button></div>`).join('')}</div>`:empty('No relationships recorded. Add one only when a public source supports it.')}</div>`}
+\public\app.js: function analyticsView(c){let max=Math.max(1,c.entities.length,c.findings.length,c.links.length);return `<div class="grid stats">${stat('TOTAL CASES',db.cases.length,'All workspaces')}${stat('ENTITIES',c.entities.length,'Selected case')}${stat('FINDINGS',c.findings.length,'Selected case')}${stat('RELATIONSHIPS',c.links.length,'Selected case')}</div><div class="grid two-col"><div class="card"><div class="section-title"><h3>Record distribution</h3><span>SELECTED CASE</span></div>${[['Entities',c.entities.length],['Findings',c.findings.length],['Relationships',c.links.length]].map(([l,v])=>`<div class="bar-row"><span>${l}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join('')}</div><div class="card"><div class="section-title"><h3>Evidence completeness</h3><span>SOURCE URL CHECK</span></div>${(()=>{let total=c.findings.length+c.links.length,complete=c.findings.filter(x=>x.source).length+c.links.filter(x=>x.evidence).length,p=total?Math.round(complete/total*100):0;return `<div class="stat-value">${p}%</div><p class="muted" style="font-size:11px">${complete} of ${total} findings/links include a source URL.</p><div class="bar"><i style="width:${p}%"></i></div>`})()}</div></div>`}
+\public\app.js: function settingsView(){return `<div class="grid two-col"><div class="card"><div class="section-title"><h3>Export center</h3><span>PORTABLE DATA</span></div><p class="muted" style="font-size:12px;line-height:1.7">Export your local records for backup, review, or reporting. PDF uses your browser's print dialog.</p><div class="list"><button class="secondary" data-export="json">↓ Export full workspace (JSON)</button><button class="secondary" data-export="csv">↓ Export selected case (CSV)</button><button class="secondary" data-export="pdf">▧ Print selected case / Save as PDF</button></div></div><div class="card"><div class="section-title"><h3>Privacy & storage</h3><span>LOCAL ONLY</span></div><p class="muted" style="font-size:12px;line-height:1.8">Your data is stored in this browser's localStorage. This prototype has no server sync, account system, or cloud AI connection. Clearing site data may erase records; keep JSON backups.</p><span class="pill">NO SERVER TRANSMISSION</span></div></div>`}
+\public\app.js: return `<div class="grid stats" id="adminStats">${stat('TOTAL ACCOUNTS','—','Registered users')}${stat('WORKSPACES','—','User data stores')}${stat('INVESTIGATION CASES','—','Across all accounts')}${stat('ACCESS LEVEL','OWNER','Restricted to your email')}</div>
+\public\app.js: $('#adminStats').innerHTML=vals.map((v,i)=>stat(['TOTAL ACCOUNTS','WORKSPACES','INVESTIGATION CASES','ACCESS LEVEL'][i],v,['Registered users','User data stores','Across all accounts','Restricted to your email'][i])).join('');
+\public\app.js: function removeRecord(type,id){if(type==='case'){if(!confirm('Delete this case and all its local records?'))return;db.cases=db.cases.filter(c=>c.id!==id);if(!db.cases.length)db.cases.push({id:uid(),name:'New investigation',description:'',created:new Date().toISOString(),entities:[],findings:[],links:[]});active=db.cases[0].id}else{let c=current();let key={entity:'entities',finding:'findings',link:'links'}[type];c[key]=c[key].filter(x=>x.id!==id);if(type==='entity')c.links=c.links.filter(l=>l.from!==id&&l.to!==id)}save();render();toast('Record removed')}
+\public\app.js: function exportData(type){let c=current();if(type==='json')download('nexus-workspace-backup.json',JSON.stringify(db,null,2),'application/json');if(type==='csv'){let rows=[['record_type','name_or_title','platform_or_confidence','details','source_url'],...c.entities.map(x=>['entity',x.name,x.platform,x.notes,x.url]),...c.findings.map(x=>['finding',x.title,x.confidence,x.details,x.source]),...c.links.map(x=>['relationship',`${c.entities.find(e=>e.id===x.from)?.name||''} -> ${c.entities.find(e=>e.id===x.to)?.name||''}`,x.label,'',x.evidence])];let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\r\\n');download('nexus-case-export.csv',csv,'text/csv')};if(type==='pdf'){go('overview');setTimeout(()=>window.print(),100)}}
+\public\app.js: $('#authSubtitle').textContent=reg?'Create a private workspace for your investigations.':'Sign in to access your private investigation workspace.';
+\public\app.js: if(!db.cases.length){const c={id:uid(),name:'My first investigation',description:'A workspace for verified public-source research.',created:new Date().toISOString(),entities:[],findings:[],links:[]};db.cases.push(c);await api('/workspace',{method:'PUT',body:JSON.stringify({workspace:db})});}
+\public\index.html: <aside class="sidebar">
+\public\index.html: <button class="nav" data-view="cases">▤ <span>Investigation Cases</span></button>
+\public\index.html: <button class="nav" data-view="graph">⌘ <span>Relationship Graph</span></button>
+\public\index.html: <button class="nav" data-view="analytics">▥ <span>Analytics</span></button>
+\public\index.html: <button class="nav" data-view="settings">⚙ <span>Data & Export</span></button>
+\public\index.html: <p id="authSubtitle">Sign in to access your private investigation workspace.</p>
+
+SOURCE HASHES:
+server.cjs | 6EA874E3EE2683E22F3D98A9453BC92979014B3E76040D97267293757F0CEBCA
+app.js | 9EEB7505FFA3A88D6AEDB1105D6C64F631B95F2CD58FAE55624E3F7E17AD0A38
+index.html | 47A797FA1F2E2CFE61CBAFAE7BD955A9C4652AAE996186D74B4D6AEC9DE8B44A
+style.css | 63A79AF9AA933DDB6802C2ACBEFDC476B77357AA800A75C6C74F2386E8123E7D
+
+========== C:\Users\mohamed\Desktop\NEXUS_INTELLIGENCE_v5_5_1_FIXED ==========
+
+SOURCE FILES:
+\server.cjs          7034
+\public\app.js      24803
+\public\index.html   4550
+\public\style.css   10202
+
+API ROUTES:
+\server.cjs: app.post('/api/auth/register',authLimiter,async(req,res)=>{
+\server.cjs: app.post('/api/auth/login',authLimiter,async(req,res)=>{
+\server.cjs: app.get('/api/auth/me',requireAuth,(req,res)=>{
+\server.cjs: app.post('/api/auth/logout',requireAuth,(req,res)=>req.session.destroy(err=>{res.clearCookie('nexus.sid',{httpOnly:true,sameSite:'strict'});if(err)return res.status(500).json({error:'Could not sign out.'});res.json({ok:true})}));
+\server.cjs: app.get('/api/workspace',requireAuth,(req,res)=>{
+\server.cjs: app.put('/api/workspace',requireAuth,(req,res)=>{
+\server.cjs: app.get('/api/admin/overview',requireAuth,requireAdmin,(req,res)=>{
+\server.cjs: app.get('*',(req,res)=>res.sendFile(path.join(__dirname,'public/index.html')));
+
+UI NAVIGATION:
+\public\app.js: function initCase(){if(!db.cases.length){const c={id:uid(),name:'My first investigation',description:'A workspace for verified public-source research.',created:new Date().toISOString(),entities:[],findings:[],links:[]};db.cases.push(c);active=c.id;save()}}
+\public\app.js: cases:['WORKSPACE MANAGEMENT','Investigation Cases','Keep each research scope independent and organized.'],
+\public\app.js: graph:['RELATIONSHIP INTELLIGENCE','Relationship Graph','Visualize only relationships supported by recorded public evidence.'],
+\public\app.js: analytics:['OPERATIONAL METRICS','Analytics Dashboard','A snapshot of coverage, evidence quality, and case activity.'],
+\public\app.js: settings:['SYSTEM & DATA','Data & Export','Back up or export your workspace.'],
+\public\app.js: $('#modalTitle').textContent={case:'Create investigation case',entity:'Add verified public entity',finding:'Record public-source finding',link:'Add evidence-backed relationship'}[type];
+\public\app.js: overview:()=>overview(c),cases:()=>casesView(),entities:()=>entitiesView(c),findings:()=>findingsView(c),graph:()=>graphView(c),analysis:()=>analysisView(c),analytics:()=>analyticsView(c),settings:()=>settingsView(),admin:()=>adminView()
+\public\app.js: }[view];$('#view').innerHTML=v();$$('[data-add]').forEach(b=>b.onclick=()=>openModal(b.dataset.add));$$('[data-delete]').forEach(b=>b.onclick=()=>removeRecord(b.dataset.delete,b.dataset.id));$$('[data-export]').forEach(b=>b.onclick=()=>exportData(b.dataset.export));if(view==='admin')loadAdmin();let analyze=$('#runAnalysis');if(analyze)analyze.onclick=()=>{$('#analysisResult').textContent=analyzeCase(c);};
+\public\app.js: function casesView(){return `<div class="toolbar">${addBtn('Create case','case')}</div><div class="card"><div class="section-title"><h3>All investigation cases</h3><span>${db.cases.length} WORKSPACES</span></div><div class="list">${db.cases.map(c=>`<div class="list-row"><div class="dot-icon">▤</div><div><b>${esc(c.name)}</b><small>${esc(c.description||'No description')} · ${c.entities.length} entities · ${c.findings.length} findings</small></div><button class="mini-btn right" data-open-case="${c.id}">Open</button><button class="mini-btn" data-delete="case" data-id="${c.id}">Delete</button></div>`).join('')}</div></div>`}
+\public\app.js: function graphView(c){let n=c.entities.length;if(!n)return `<div class="toolbar">${addBtn('Add verified entity','entity')}</div><div class="card graph-card">${empty('Add verified entities, then record evidence-backed links to build the graph.')}</div>`;
+\public\app.js: return `<div class="toolbar">${addBtn('Add entity','entity')}${addBtn('Add relationship','link')}</div><div class="card graph-card"><div class="section-title"><h3>Verified relationship map</h3><span>${c.entities.length} NODES · ${c.links.length} LINKS</span></div><svg class="graph-svg" viewBox="0 0 840 340" role="img" aria-label="Relationship graph">${lines}${nodes}</svg><p class="muted" style="font-size:10px">Edges represent manually verified public-source relationships. Hover nodes or lines for details.</p></div><div class="card" style="margin-top:14px"><div class="section-title"><h3>Documented connections</h3><span>WITH SOURCE</span></div>${c.links.length?`<div class="list">${c.links.map(l=>`<div class="list-row"><div class="dot-icon">↔</div><div><b>${esc(c.entities.find(e=>e.id===l.from)?.name||'Unknown')} ↔ ${esc(c.entities.find(e=>e.id===l.to)?.name||'Unknown')}</b><small>${esc(l.label)}</small></div><a class="right" href="${esc(l.evidence)}" target="_blank" rel="noopener">Evidence ↗</a><button class="mini-btn" data-delete="link" data-id="${l.id}">Remove</button></div>`).join('')}</div>`:empty('No relationships recorded. Add one only when a public source supports it.')}</div>`}
+\public\app.js: function analyticsView(c){let max=Math.max(1,c.entities.length,c.findings.length,c.links.length);return `<div class="grid stats">${stat('TOTAL CASES',db.cases.length,'All workspaces')}${stat('ENTITIES',c.entities.length,'Selected case')}${stat('FINDINGS',c.findings.length,'Selected case')}${stat('RELATIONSHIPS',c.links.length,'Selected case')}</div><div class="grid two-col"><div class="card"><div class="section-title"><h3>Record distribution</h3><span>SELECTED CASE</span></div>${[['Entities',c.entities.length],['Findings',c.findings.length],['Relationships',c.links.length]].map(([l,v])=>`<div class="bar-row"><span>${l}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join('')}</div><div class="card"><div class="section-title"><h3>Evidence completeness</h3><span>SOURCE URL CHECK</span></div>${(()=>{let total=c.findings.length+c.links.length,complete=c.findings.filter(x=>x.source).length+c.links.filter(x=>x.evidence).length,p=total?Math.round(complete/total*100):0;return `<div class="stat-value">${p}%</div><p class="muted" style="font-size:11px">${complete} of ${total} findings/links include a source URL.</p><div class="bar"><i style="width:${p}%"></i></div>`})()}</div></div>`}
+\public\app.js: function settingsView(){return `<div class="grid two-col"><div class="card"><div class="section-title"><h3>Export center</h3><span>PORTABLE DATA</span></div><p class="muted" style="font-size:12px;line-height:1.7">Export your local records for backup, review, or reporting. PDF uses your browser's print dialog.</p><div class="list"><button class="secondary" data-export="json">↓ Export full workspace (JSON)</button><button class="secondary" data-export="csv">↓ Export selected case (CSV)</button><button class="secondary" data-export="pdf">▧ Print selected case / Save as PDF</button></div></div><div class="card"><div class="section-title"><h3>Privacy & storage</h3><span>LOCAL ONLY</span></div><p class="muted" style="font-size:12px;line-height:1.8">Your workspace is stored per account in the server's SQLite database. Keep JSON backups and back up the server data folder while the app is stopped.</p><span class="pill">NO SERVER TRANSMISSION</span></div></div>`}
+\public\app.js: return `<div class="grid stats" id="adminStats">${stat('TOTAL ACCOUNTS','—','Registered users')}${stat('WORKSPACES','—','User data stores')}${stat('INVESTIGATION CASES','—','Across all accounts')}${stat('ACCESS LEVEL','OWNER','Restricted to your email')}</div>
+\public\app.js: $('#adminStats').innerHTML=vals.map((v,i)=>stat(['TOTAL ACCOUNTS','WORKSPACES','INVESTIGATION CASES','ACCESS LEVEL'][i],v,['Registered users','User data stores','Across all accounts','Restricted to your email'][i])).join('');
+\public\app.js: function removeRecord(type,id){if(type==='case'){if(!confirm('Delete this case and all its local records?'))return;db.cases=db.cases.filter(c=>c.id!==id);if(!db.cases.length)db.cases.push({id:uid(),name:'New investigation',description:'',created:new Date().toISOString(),entities:[],findings:[],links:[]});active=db.cases[0].id}else{let c=current();let key={entity:'entities',finding:'findings',link:'links'}[type];c[key]=c[key].filter(x=>x.id!==id);if(type==='entity')c.links=c.links.filter(l=>l.from!==id&&l.to!==id)}save();render();toast('Record removed')}
+\public\app.js: function exportData(type){let c=current();if(type==='json')download('nexus-workspace-backup.json',JSON.stringify(db,null,2),'application/json');if(type==='csv'){let rows=[['record_type','name_or_title','platform_or_confidence','details','source_url'],...c.entities.map(x=>['entity',x.name,x.platform,x.notes,x.url]),...c.findings.map(x=>['finding',x.title,x.confidence,x.details,x.source]),...c.links.map(x=>['relationship',`${c.entities.find(e=>e.id===x.from)?.name||''} -> ${c.entities.find(e=>e.id===x.to)?.name||''}`,x.label,'',x.evidence])];let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\r\\n');download('nexus-case-export.csv',csv,'text/csv')};if(type==='pdf'){go('overview');setTimeout(()=>window.print(),100)}}
+\public\app.js: $('#authSubtitle').textContent=reg?'Create a private workspace for your investigations.':'Sign in to access your private investigation workspace.';
+\public\app.js: if(!db.cases.length){const c={id:uid(),name:'My first investigation',description:'A workspace for verified public-source research.',created:new Date().toISOString(),entities:[],findings:[],links:[]};db.cases.push(c);await api('/workspace',{method:'PUT',body:JSON.stringify({workspace:db})});}
+\public\index.html: <aside class="sidebar">
+\public\index.html: <button class="nav" data-view="cases">▤ <span>Investigation Cases</span></button>
+\public\index.html: <button class="nav" data-view="graph">⌘ <span>Relationship Graph</span></button>
+\public\index.html: <button class="nav" data-view="analytics">▥ <span>Analytics</span></button>
+\public\index.html: <button class="nav" data-view="settings">⚙ <span>Data & Export</span></button>
+\public\index.html: <p id="authSubtitle">Sign in to access your private investigation workspace.</p>
+
+SOURCE HASHES:
+server.cjs | E8D0D29BB1FDAF65030C8187C6AD1D66599A4A59A1561CA93C4E61304A9384DE
+app.js | D014912DFAD0C3BFAEB24EA4BDAD40284F1D05DE7A6A4A4709835F221FF9EB69
+index.html | D8DECF895FFE9753AC8DCB855A93970A2D8D51F083938C85DA7107700C730C58
+style.css | 63A79AF9AA933DDB6802C2ACBEFDC476B77357AA800A75C6C74F2386E8123E7D
+
+========== C:\Users\mohamed\Desktop\NEXUS_DESKTOP_SETUP_SOURCE\nexus_setup_work ==========
+
+SOURCE FILES:
+\server.cjs          7216
+\app\server.cjs      7216
+\app\public\app.js  24803
+\app\public\ind...   4550
+\app\public\sty...  10202
+\desktop-host\P...   5630
+\public\app.js      24803
+\public\index.html   4550
+\public\style.css   10202
+
+API ROUTES:
+\server.cjs: app.post('/api/auth/register',authLimiter,async(req,res)=>{
+\server.cjs: app.post('/api/auth/login',authLimiter,async(req,res)=>{
+\server.cjs: app.get('/health',(req,res)=>res.json({ok:true,version:'5.5.1'}));
+\server.cjs: app.get('/api/auth/me',requireAuth,(req,res)=>{
+\server.cjs: app.post('/api/auth/logout',requireAuth,(req,res)=>req.session.destroy(err=>{res.clearCookie('nexus.sid',{httpOnly:true,sameSite:'strict'});if(err)return res.status(500).json({error:'Could not sign out.'});res.json({ok:true})}));
+\server.cjs: app.get('/api/workspace',requireAuth,(req,res)=>{
+\server.cjs: app.put('/api/workspace',requireAuth,(req,res)=>{
+\server.cjs: app.get('/api/admin/overview',requireAuth,requireAdmin,(req,res)=>{
+\server.cjs: app.get('*',(req,res)=>res.sendFile(path.join(__dirname,'public/index.html')));
+\app\server.cjs: app.post('/api/auth/register',authLimiter,async(req,res)=>{
+\app\server.cjs: app.post('/api/auth/login',authLimiter,async(req,res)=>{
+\app\server.cjs: app.get('/health',(req,res)=>res.json({ok:true,version:'5.5.1'}));
+\app\server.cjs: app.get('/api/auth/me',requireAuth,(req,res)=>{
+\app\server.cjs: app.post('/api/auth/logout',requireAuth,(req,res)=>req.session.destroy(err=>{res.clearCookie('nexus.sid',{httpOnly:true,sameSite:'strict'});if(err)return res.status(500).json({error:'Could not sign out.'});res.json({ok:true})}));
+\app\server.cjs: app.get('/api/workspace',requireAuth,(req,res)=>{
+\app\server.cjs: app.put('/api/workspace',requireAuth,(req,res)=>{
+\app\server.cjs: app.get('/api/admin/overview',requireAuth,requireAdmin,(req,res)=>{
+\app\server.cjs: app.get('*',(req,res)=>res.sendFile(path.join(__dirname,'public/index.html')));
+
+UI NAVIGATION:
+\app\public\app.js: function initCase(){if(!db.cases.length){const c={id:uid(),name:'My first investigation',description:'A workspace for verified public-source research.',created:new Date().toISOString(),entities:[],findings:[],links:[]};db.cases.push(c);active=c.id;save()}}
+\app\public\app.js: cases:['WORKSPACE MANAGEMENT','Investigation Cases','Keep each research scope independent and organized.'],
+\app\public\app.js: graph:['RELATIONSHIP INTELLIGENCE','Relationship Graph','Visualize only relationships supported by recorded public evidence.'],
+\app\public\app.js: analytics:['OPERATIONAL METRICS','Analytics Dashboard','A snapshot of coverage, evidence quality, and case activity.'],
+\app\public\app.js: settings:['SYSTEM & DATA','Data & Export','Back up or export your workspace.'],
+\app\public\app.js: $('#modalTitle').textContent={case:'Create investigation case',entity:'Add verified public entity',finding:'Record public-source finding',link:'Add evidence-backed relationship'}[type];
+\app\public\app.js: overview:()=>overview(c),cases:()=>casesView(),entities:()=>entitiesView(c),findings:()=>findingsView(c),graph:()=>graphView(c),analysis:()=>analysisView(c),analytics:()=>analyticsView(c),settings:()=>settingsView(),admin:()=>adminView()
+\app\public\app.js: }[view];$('#view').innerHTML=v();$$('[data-add]').forEach(b=>b.onclick=()=>openModal(b.dataset.add));$$('[data-delete]').forEach(b=>b.onclick=()=>removeRecord(b.dataset.delete,b.dataset.id));$$('[data-export]').forEach(b=>b.onclick=()=>exportData(b.dataset.export));if(view==='admin')loadAdmin();let analyze=$('#runAnalysis');if(analyze)analyze.onclick=()=>{$('#analysisResult').textContent=analyzeCase(c);};
+\app\public\app.js: function casesView(){return `<div class="toolbar">${addBtn('Create case','case')}</div><div class="card"><div class="section-title"><h3>All investigation cases</h3><span>${db.cases.length} WORKSPACES</span></div><div class="list">${db.cases.map(c=>`<div class="list-row"><div class="dot-icon">▤</div><div><b>${esc(c.name)}</b><small>${esc(c.description||'No description')} · ${c.entities.length} entities · ${c.findings.length} findings</small></div><button class="mini-btn right" data-open-case="${c.id}">Open</button><button class="mini-btn" data-delete="case" data-id="${c.id}">Delete</button></div>`).join('')}</div></div>`}
+\app\public\app.js: function graphView(c){let n=c.entities.length;if(!n)return `<div class="toolbar">${addBtn('Add verified entity','entity')}</div><div class="card graph-card">${empty('Add verified entities, then record evidence-backed links to build the graph.')}</div>`;
+\app\public\app.js: return `<div class="toolbar">${addBtn('Add entity','entity')}${addBtn('Add relationship','link')}</div><div class="card graph-card"><div class="section-title"><h3>Verified relationship map</h3><span>${c.entities.length} NODES · ${c.links.length} LINKS</span></div><svg class="graph-svg" viewBox="0 0 840 340" role="img" aria-label="Relationship graph">${lines}${nodes}</svg><p class="muted" style="font-size:10px">Edges represent manually verified public-source relationships. Hover nodes or lines for details.</p></div><div class="card" style="margin-top:14px"><div class="section-title"><h3>Documented connections</h3><span>WITH SOURCE</span></div>${c.links.length?`<div class="list">${c.links.map(l=>`<div class="list-row"><div class="dot-icon">↔</div><div><b>${esc(c.entities.find(e=>e.id===l.from)?.name||'Unknown')} ↔ ${esc(c.entities.find(e=>e.id===l.to)?.name||'Unknown')}</b><small>${esc(l.label)}</small></div><a class="right" href="${esc(l.evidence)}" target="_blank" rel="noopener">Evidence ↗</a><button class="mini-btn" data-delete="link" data-id="${l.id}">Remove</button></div>`).join('')}</div>`:empty('No relationships recorded. Add one only when a public source supports it.')}</div>`}
+\app\public\app.js: function analyticsView(c){let max=Math.max(1,c.entities.length,c.findings.length,c.links.length);return `<div class="grid stats">${stat('TOTAL CASES',db.cases.length,'All workspaces')}${stat('ENTITIES',c.entities.length,'Selected case')}${stat('FINDINGS',c.findings.length,'Selected case')}${stat('RELATIONSHIPS',c.links.length,'Selected case')}</div><div class="grid two-col"><div class="card"><div class="section-title"><h3>Record distribution</h3><span>SELECTED CASE</span></div>${[['Entities',c.entities.length],['Findings',c.findings.length],['Relationships',c.links.length]].map(([l,v])=>`<div class="bar-row"><span>${l}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join('')}</div><div class="card"><div class="section-title"><h3>Evidence completeness</h3><span>SOURCE URL CHECK</span></div>${(()=>{let total=c.findings.length+c.links.length,complete=c.findings.filter(x=>x.source).length+c.links.filter(x=>x.evidence).length,p=total?Math.round(complete/total*100):0;return `<div class="stat-value">${p}%</div><p class="muted" style="font-size:11px">${complete} of ${total} findings/links include a source URL.</p><div class="bar"><i style="width:${p}%"></i></div>`})()}</div></div>`}
+\app\public\app.js: function settingsView(){return `<div class="grid two-col"><div class="card"><div class="section-title"><h3>Export center</h3><span>PORTABLE DATA</span></div><p class="muted" style="font-size:12px;line-height:1.7">Export your local records for backup, review, or reporting. PDF uses your browser's print dialog.</p><div class="list"><button class="secondary" data-export="json">↓ Export full workspace (JSON)</button><button class="secondary" data-export="csv">↓ Export selected case (CSV)</button><button class="secondary" data-export="pdf">▧ Print selected case / Save as PDF</button></div></div><div class="card"><div class="section-title"><h3>Privacy & storage</h3><span>LOCAL ONLY</span></div><p class="muted" style="font-size:12px;line-height:1.8">Your workspace is stored per account in the server's SQLite database. Keep JSON backups and back up the server data folder while the app is stopped.</p><span class="pill">NO SERVER TRANSMISSION</span></div></div>`}
+\app\public\app.js: return `<div class="grid stats" id="adminStats">${stat('TOTAL ACCOUNTS','—','Registered users')}${stat('WORKSPACES','—','User data stores')}${stat('INVESTIGATION CASES','—','Across all accounts')}${stat('ACCESS LEVEL','OWNER','Restricted to your email')}</div>
+\app\public\app.js: $('#adminStats').innerHTML=vals.map((v,i)=>stat(['TOTAL ACCOUNTS','WORKSPACES','INVESTIGATION CASES','ACCESS LEVEL'][i],v,['Registered users','User data stores','Across all accounts','Restricted to your email'][i])).join('');
+\app\public\app.js: function removeRecord(type,id){if(type==='case'){if(!confirm('Delete this case and all its local records?'))return;db.cases=db.cases.filter(c=>c.id!==id);if(!db.cases.length)db.cases.push({id:uid(),name:'New investigation',description:'',created:new Date().toISOString(),entities:[],findings:[],links:[]});active=db.cases[0].id}else{let c=current();let key={entity:'entities',finding:'findings',link:'links'}[type];c[key]=c[key].filter(x=>x.id!==id);if(type==='entity')c.links=c.links.filter(l=>l.from!==id&&l.to!==id)}save();render();toast('Record removed')}
+\app\public\app.js: function exportData(type){let c=current();if(type==='json')download('nexus-workspace-backup.json',JSON.stringify(db,null,2),'application/json');if(type==='csv'){let rows=[['record_type','name_or_title','platform_or_confidence','details','source_url'],...c.entities.map(x=>['entity',x.name,x.platform,x.notes,x.url]),...c.findings.map(x=>['finding',x.title,x.confidence,x.details,x.source]),...c.links.map(x=>['relationship',`${c.entities.find(e=>e.id===x.from)?.name||''} -> ${c.entities.find(e=>e.id===x.to)?.name||''}`,x.label,'',x.evidence])];let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\r\\n');download('nexus-case-export.csv',csv,'text/csv')};if(type==='pdf'){go('overview');setTimeout(()=>window.print(),100)}}
+\app\public\app.js: $('#authSubtitle').textContent=reg?'Create a private workspace for your investigations.':'Sign in to access your private investigation workspace.';
+\app\public\app.js: if(!db.cases.length){const c={id:uid(),name:'My first investigation',description:'A workspace for verified public-source research.',created:new Date().toISOString(),entities:[],findings:[],links:[]};db.cases.push(c);await api('/workspace',{method:'PUT',body:JSON.stringify({workspace:db})});}
+\app\public\index.html: <aside class="sidebar">
+\app\public\index.html: <button class="nav" data-view="cases">▤ <span>Investigation Cases</span></button>
+\app\public\index.html: <button class="nav" data-view="graph">⌘ <span>Relationship Graph</span></button>
+\app\public\index.html: <button class="nav" data-view="analytics">▥ <span>Analytics</span></button>
+\app\public\index.html: <button class="nav" data-view="settings">⚙ <span>Data & Export</span></button>
+\app\public\index.html: <p id="authSubtitle">Sign in to access your private investigation workspace.</p>
+\public\app.js: function initCase(){if(!db.cases.length){const c={id:uid(),name:'My first investigation',description:'A workspace for verified public-source research.',created:new Date().toISOString(),entities:[],findings:[],links:[]};db.cases.push(c);active=c.id;save()}}
+\public\app.js: cases:['WORKSPACE MANAGEMENT','Investigation Cases','Keep each research scope independent and organized.'],
+\public\app.js: graph:['RELATIONSHIP INTELLIGENCE','Relationship Graph','Visualize only relationships supported by recorded public evidence.'],
+\public\app.js: analytics:['OPERATIONAL METRICS','Analytics Dashboard','A snapshot of coverage, evidence quality, and case activity.'],
+\public\app.js: settings:['SYSTEM & DATA','Data & Export','Back up or export your workspace.'],
+\public\app.js: $('#modalTitle').textContent={case:'Create investigation case',entity:'Add verified public entity',finding:'Record public-source finding',link:'Add evidence-backed relationship'}[type];
+\public\app.js: overview:()=>overview(c),cases:()=>casesView(),entities:()=>entitiesView(c),findings:()=>findingsView(c),graph:()=>graphView(c),analysis:()=>analysisView(c),analytics:()=>analyticsView(c),settings:()=>settingsView(),admin:()=>adminView()
+\public\app.js: }[view];$('#view').innerHTML=v();$$('[data-add]').forEach(b=>b.onclick=()=>openModal(b.dataset.add));$$('[data-delete]').forEach(b=>b.onclick=()=>removeRecord(b.dataset.delete,b.dataset.id));$$('[data-export]').forEach(b=>b.onclick=()=>exportData(b.dataset.export));if(view==='admin')loadAdmin();let analyze=$('#runAnalysis');if(analyze)analyze.onclick=()=>{$('#analysisResult').textContent=analyzeCase(c);};
+\public\app.js: function casesView(){return `<div class="toolbar">${addBtn('Create case','case')}</div><div class="card"><div class="section-title"><h3>All investigation cases</h3><span>${db.cases.length} WORKSPACES</span></div><div class="list">${db.cases.map(c=>`<div class="list-row"><div class="dot-icon">▤</div><div><b>${esc(c.name)}</b><small>${esc(c.description||'No description')} · ${c.entities.length} entities · ${c.findings.length} findings</small></div><button class="mini-btn right" data-open-case="${c.id}">Open</button><button class="mini-btn" data-delete="case" data-id="${c.id}">Delete</button></div>`).join('')}</div></div>`}
+\public\app.js: function graphView(c){let n=c.entities.length;if(!n)return `<div class="toolbar">${addBtn('Add verified entity','entity')}</div><div class="card graph-card">${empty('Add verified entities, then record evidence-backed links to build the graph.')}</div>`;
+\public\app.js: return `<div class="toolbar">${addBtn('Add entity','entity')}${addBtn('Add relationship','link')}</div><div class="card graph-card"><div class="section-title"><h3>Verified relationship map</h3><span>${c.entities.length} NODES · ${c.links.length} LINKS</span></div><svg class="graph-svg" viewBox="0 0 840 340" role="img" aria-label="Relationship graph">${lines}${nodes}</svg><p class="muted" style="font-size:10px">Edges represent manually verified public-source relationships. Hover nodes or lines for details.</p></div><div class="card" style="margin-top:14px"><div class="section-title"><h3>Documented connections</h3><span>WITH SOURCE</span></div>${c.links.length?`<div class="list">${c.links.map(l=>`<div class="list-row"><div class="dot-icon">↔</div><div><b>${esc(c.entities.find(e=>e.id===l.from)?.name||'Unknown')} ↔ ${esc(c.entities.find(e=>e.id===l.to)?.name||'Unknown')}</b><small>${esc(l.label)}</small></div><a class="right" href="${esc(l.evidence)}" target="_blank" rel="noopener">Evidence ↗</a><button class="mini-btn" data-delete="link" data-id="${l.id}">Remove</button></div>`).join('')}</div>`:empty('No relationships recorded. Add one only when a public source supports it.')}</div>`}
+\public\app.js: function analyticsView(c){let max=Math.max(1,c.entities.length,c.findings.length,c.links.length);return `<div class="grid stats">${stat('TOTAL CASES',db.cases.length,'All workspaces')}${stat('ENTITIES',c.entities.length,'Selected case')}${stat('FINDINGS',c.findings.length,'Selected case')}${stat('RELATIONSHIPS',c.links.length,'Selected case')}</div><div class="grid two-col"><div class="card"><div class="section-title"><h3>Record distribution</h3><span>SELECTED CASE</span></div>${[['Entities',c.entities.length],['Findings',c.findings.length],['Relationships',c.links.length]].map(([l,v])=>`<div class="bar-row"><span>${l}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join('')}</div><div class="card"><div class="section-title"><h3>Evidence completeness</h3><span>SOURCE URL CHECK</span></div>${(()=>{let total=c.findings.length+c.links.length,complete=c.findings.filter(x=>x.source).length+c.links.filter(x=>x.evidence).length,p=total?Math.round(complete/total*100):0;return `<div class="stat-value">${p}%</div><p class="muted" style="font-size:11px">${complete} of ${total} findings/links include a source URL.</p><div class="bar"><i style="width:${p}%"></i></div>`})()}</div></div>`}
+\public\app.js: function settingsView(){return `<div class="grid two-col"><div class="card"><div class="section-title"><h3>Export center</h3><span>PORTABLE DATA</span></div><p class="muted" style="font-size:12px;line-height:1.7">Export your local records for backup, review, or reporting. PDF uses your browser's print dialog.</p><div class="list"><button class="secondary" data-export="json">↓ Export full workspace (JSON)</button><button class="secondary" data-export="csv">↓ Export selected case (CSV)</button><button class="secondary" data-export="pdf">▧ Print selected case / Save as PDF</button></div></div><div class="card"><div class="section-title"><h3>Privacy & storage</h3><span>LOCAL ONLY</span></div><p class="muted" style="font-size:12px;line-height:1.8">Your workspace is stored per account in the server's SQLite database. Keep JSON backups and back up the server data folder while the app is stopped.</p><span class="pill">NO SERVER TRANSMISSION</span></div></div>`}
+\public\app.js: return `<div class="grid stats" id="adminStats">${stat('TOTAL ACCOUNTS','—','Registered users')}${stat('WORKSPACES','—','User data stores')}${stat('INVESTIGATION CASES','—','Across all accounts')}${stat('ACCESS LEVEL','OWNER','Restricted to your email')}</div>
+\public\app.js: $('#adminStats').innerHTML=vals.map((v,i)=>stat(['TOTAL ACCOUNTS','WORKSPACES','INVESTIGATION CASES','ACCESS LEVEL'][i],v,['Registered users','User data stores','Across all accounts','Restricted to your email'][i])).join('');
+\public\app.js: function removeRecord(type,id){if(type==='case'){if(!confirm('Delete this case and all its local records?'))return;db.cases=db.cases.filter(c=>c.id!==id);if(!db.cases.length)db.cases.push({id:uid(),name:'New investigation',description:'',created:new Date().toISOString(),entities:[],findings:[],links:[]});active=db.cases[0].id}else{let c=current();let key={entity:'entities',finding:'findings',link:'links'}[type];c[key]=c[key].filter(x=>x.id!==id);if(type==='entity')c.links=c.links.filter(l=>l.from!==id&&l.to!==id)}save();render();toast('Record removed')}
+\public\app.js: function exportData(type){let c=current();if(type==='json')download('nexus-workspace-backup.json',JSON.stringify(db,null,2),'application/json');if(type==='csv'){let rows=[['record_type','name_or_title','platform_or_confidence','details','source_url'],...c.entities.map(x=>['entity',x.name,x.platform,x.notes,x.url]),...c.findings.map(x=>['finding',x.title,x.confidence,x.details,x.source]),...c.links.map(x=>['relationship',`${c.entities.find(e=>e.id===x.from)?.name||''} -> ${c.entities.find(e=>e.id===x.to)?.name||''}`,x.label,'',x.evidence])];let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\r\\n');download('nexus-case-export.csv',csv,'text/csv')};if(type==='pdf'){go('overview');setTimeout(()=>window.print(),100)}}
+\public\app.js: $('#authSubtitle').textContent=reg?'Create a private workspace for your investigations.':'Sign in to access your private investigation workspace.';
+\public\app.js: if(!db.cases.length){const c={id:uid(),name:'My first investigation',description:'A workspace for verified public-source research.',created:new Date().toISOString(),entities:[],findings:[],links:[]};db.cases.push(c);await api('/workspace',{method:'PUT',body:JSON.stringify({workspace:db})});}
+\public\index.html: <aside class="sidebar">
+\public\index.html: <button class="nav" data-view="cases">▤ <span>Investigation Cases</span></button>
+\public\index.html: <button class="nav" data-view="graph">⌘ <span>Relationship Graph</span></button>
+\public\index.html: <button class="nav" data-view="analytics">▥ <span>Analytics</span></button>
+\public\index.html: <button class="nav" data-view="settings">⚙ <span>Data & Export</span></button>
+\public\index.html: <p id="authSubtitle">Sign in to access your private investigation workspace.</p>
+
+SOURCE HASHES:
+server.cjs | 6990EE7FC3A4251055BB29865E21949A34055900DFA2E121B6CDFBA37383CA38
+server.cjs | 6990EE7FC3A4251055BB29865E21949A34055900DFA2E121B6CDFBA37383CA38
+app.js | D014912DFAD0C3BFAEB24EA4BDAD40284F1D05DE7A6A4A4709835F221FF9EB69
+index.html | D8DECF895FFE9753AC8DCB855A93970A2D8D51F083938C85DA7107700C730C58
+style.css | 63A79AF9AA933DDB6802C2ACBEFDC476B77357AA800A75C6C74F2386E8123E7D
+Program.cs | 8D475C23DE49910361A62F524A98622386B369FFF731EC7C359845A7863F4D98
+app.js | D014912DFAD0C3BFAEB24EA4BDAD40284F1D05DE7A6A4A4709835F221FF9EB69
+index.html | D8DECF895FFE9753AC8DCB855A93970A2D8D51F083938C85DA7107700C730C58
+style.css | 63A79AF9AA933DDB6802C2ACBEFDC476B77357AA800A75C6C74F2386E8123E7D
+
+========== C:\Users\mohamed\Desktop\NEXUS_DESKTOP_SETUP_SOURCE\nexus_setup_work\app ==========
+
+SOURCE FILES:
+\server.cjs          7216
+\public\app.js      24803
+\public\index.html   4550
+\public\style.css   10202
+
+API ROUTES:
+\server.cjs: app.post('/api/auth/register',authLimiter,async(req,res)=>{
+\server.cjs: app.post('/api/auth/login',authLimiter,async(req,res)=>{
+\server.cjs: app.get('/health',(req,res)=>res.json({ok:true,version:'5.5.1'}));
+\server.cjs: app.get('/api/auth/me',requireAuth,(req,res)=>{
+\server.cjs: app.post('/api/auth/logout',requireAuth,(req,res)=>req.session.destroy(err=>{res.clearCookie('nexus.sid',{httpOnly:true,sameSite:'strict'});if(err)return res.status(500).json({error:'Could not sign out.'});res.json({ok:true})}));
+\server.cjs: app.get('/api/workspace',requireAuth,(req,res)=>{
+\server.cjs: app.put('/api/workspace',requireAuth,(req,res)=>{
+\server.cjs: app.get('/api/admin/overview',requireAuth,requireAdmin,(req,res)=>{
+\server.cjs: app.get('*',(req,res)=>res.sendFile(path.join(__dirname,'public/index.html')));
+
+UI NAVIGATION:
+\public\app.js: function initCase(){if(!db.cases.length){const c={id:uid(),name:'My first investigation',description:'A workspace for verified public-source research.',created:new Date().toISOString(),entities:[],findings:[],links:[]};db.cases.push(c);active=c.id;save()}}
+\public\app.js: cases:['WORKSPACE MANAGEMENT','Investigation Cases','Keep each research scope independent and organized.'],
+\public\app.js: graph:['RELATIONSHIP INTELLIGENCE','Relationship Graph','Visualize only relationships supported by recorded public evidence.'],
+\public\app.js: analytics:['OPERATIONAL METRICS','Analytics Dashboard','A snapshot of coverage, evidence quality, and case activity.'],
+\public\app.js: settings:['SYSTEM & DATA','Data & Export','Back up or export your workspace.'],
+\public\app.js: $('#modalTitle').textContent={case:'Create investigation case',entity:'Add verified public entity',finding:'Record public-source finding',link:'Add evidence-backed relationship'}[type];
+\public\app.js: overview:()=>overview(c),cases:()=>casesView(),entities:()=>entitiesView(c),findings:()=>findingsView(c),graph:()=>graphView(c),analysis:()=>analysisView(c),analytics:()=>analyticsView(c),settings:()=>settingsView(),admin:()=>adminView()
+\public\app.js: }[view];$('#view').innerHTML=v();$$('[data-add]').forEach(b=>b.onclick=()=>openModal(b.dataset.add));$$('[data-delete]').forEach(b=>b.onclick=()=>removeRecord(b.dataset.delete,b.dataset.id));$$('[data-export]').forEach(b=>b.onclick=()=>exportData(b.dataset.export));if(view==='admin')loadAdmin();let analyze=$('#runAnalysis');if(analyze)analyze.onclick=()=>{$('#analysisResult').textContent=analyzeCase(c);};
+\public\app.js: function casesView(){return `<div class="toolbar">${addBtn('Create case','case')}</div><div class="card"><div class="section-title"><h3>All investigation cases</h3><span>${db.cases.length} WORKSPACES</span></div><div class="list">${db.cases.map(c=>`<div class="list-row"><div class="dot-icon">▤</div><div><b>${esc(c.name)}</b><small>${esc(c.description||'No description')} · ${c.entities.length} entities · ${c.findings.length} findings</small></div><button class="mini-btn right" data-open-case="${c.id}">Open</button><button class="mini-btn" data-delete="case" data-id="${c.id}">Delete</button></div>`).join('')}</div></div>`}
+\public\app.js: function graphView(c){let n=c.entities.length;if(!n)return `<div class="toolbar">${addBtn('Add verified entity','entity')}</div><div class="card graph-card">${empty('Add verified entities, then record evidence-backed links to build the graph.')}</div>`;
+\public\app.js: return `<div class="toolbar">${addBtn('Add entity','entity')}${addBtn('Add relationship','link')}</div><div class="card graph-card"><div class="section-title"><h3>Verified relationship map</h3><span>${c.entities.length} NODES · ${c.links.length} LINKS</span></div><svg class="graph-svg" viewBox="0 0 840 340" role="img" aria-label="Relationship graph">${lines}${nodes}</svg><p class="muted" style="font-size:10px">Edges represent manually verified public-source relationships. Hover nodes or lines for details.</p></div><div class="card" style="margin-top:14px"><div class="section-title"><h3>Documented connections</h3><span>WITH SOURCE</span></div>${c.links.length?`<div class="list">${c.links.map(l=>`<div class="list-row"><div class="dot-icon">↔</div><div><b>${esc(c.entities.find(e=>e.id===l.from)?.name||'Unknown')} ↔ ${esc(c.entities.find(e=>e.id===l.to)?.name||'Unknown')}</b><small>${esc(l.label)}</small></div><a class="right" href="${esc(l.evidence)}" target="_blank" rel="noopener">Evidence ↗</a><button class="mini-btn" data-delete="link" data-id="${l.id}">Remove</button></div>`).join('')}</div>`:empty('No relationships recorded. Add one only when a public source supports it.')}</div>`}
+\public\app.js: function analyticsView(c){let max=Math.max(1,c.entities.length,c.findings.length,c.links.length);return `<div class="grid stats">${stat('TOTAL CASES',db.cases.length,'All workspaces')}${stat('ENTITIES',c.entities.length,'Selected case')}${stat('FINDINGS',c.findings.length,'Selected case')}${stat('RELATIONSHIPS',c.links.length,'Selected case')}</div><div class="grid two-col"><div class="card"><div class="section-title"><h3>Record distribution</h3><span>SELECTED CASE</span></div>${[['Entities',c.entities.length],['Findings',c.findings.length],['Relationships',c.links.length]].map(([l,v])=>`<div class="bar-row"><span>${l}</span><div class="bar"><i style="width:${v/max*100}%"></i></div><b>${v}</b></div>`).join('')}</div><div class="card"><div class="section-title"><h3>Evidence completeness</h3><span>SOURCE URL CHECK</span></div>${(()=>{let total=c.findings.length+c.links.length,complete=c.findings.filter(x=>x.source).length+c.links.filter(x=>x.evidence).length,p=total?Math.round(complete/total*100):0;return `<div class="stat-value">${p}%</div><p class="muted" style="font-size:11px">${complete} of ${total} findings/links include a source URL.</p><div class="bar"><i style="width:${p}%"></i></div>`})()}</div></div>`}
+\public\app.js: function settingsView(){return `<div class="grid two-col"><div class="card"><div class="section-title"><h3>Export center</h3><span>PORTABLE DATA</span></div><p class="muted" style="font-size:12px;line-height:1.7">Export your local records for backup, review, or reporting. PDF uses your browser's print dialog.</p><div class="list"><button class="secondary" data-export="json">↓ Export full workspace (JSON)</button><button class="secondary" data-export="csv">↓ Export selected case (CSV)</button><button class="secondary" data-export="pdf">▧ Print selected case / Save as PDF</button></div></div><div class="card"><div class="section-title"><h3>Privacy & storage</h3><span>LOCAL ONLY</span></div><p class="muted" style="font-size:12px;line-height:1.8">Your workspace is stored per account in the server's SQLite database. Keep JSON backups and back up the server data folder while the app is stopped.</p><span class="pill">NO SERVER TRANSMISSION</span></div></div>`}
+\public\app.js: return `<div class="grid stats" id="adminStats">${stat('TOTAL ACCOUNTS','—','Registered users')}${stat('WORKSPACES','—','User data stores')}${stat('INVESTIGATION CASES','—','Across all accounts')}${stat('ACCESS LEVEL','OWNER','Restricted to your email')}</div>
+\public\app.js: $('#adminStats').innerHTML=vals.map((v,i)=>stat(['TOTAL ACCOUNTS','WORKSPACES','INVESTIGATION CASES','ACCESS LEVEL'][i],v,['Registered users','User data stores','Across all accounts','Restricted to your email'][i])).join('');
+\public\app.js: function removeRecord(type,id){if(type==='case'){if(!confirm('Delete this case and all its local records?'))return;db.cases=db.cases.filter(c=>c.id!==id);if(!db.cases.length)db.cases.push({id:uid(),name:'New investigation',description:'',created:new Date().toISOString(),entities:[],findings:[],links:[]});active=db.cases[0].id}else{let c=current();let key={entity:'entities',finding:'findings',link:'links'}[type];c[key]=c[key].filter(x=>x.id!==id);if(type==='entity')c.links=c.links.filter(l=>l.from!==id&&l.to!==id)}save();render();toast('Record removed')}
+\public\app.js: function exportData(type){let c=current();if(type==='json')download('nexus-workspace-backup.json',JSON.stringify(db,null,2),'application/json');if(type==='csv'){let rows=[['record_type','name_or_title','platform_or_confidence','details','source_url'],...c.entities.map(x=>['entity',x.name,x.platform,x.notes,x.url]),...c.findings.map(x=>['finding',x.title,x.confidence,x.details,x.source]),...c.links.map(x=>['relationship',`${c.entities.find(e=>e.id===x.from)?.name||''} -> ${c.entities.find(e=>e.id===x.to)?.name||''}`,x.label,'',x.evidence])];let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\r\\n');download('nexus-case-export.csv',csv,'text/csv')};if(type==='pdf'){go('overview');setTimeout(()=>window.print(),100)}}
+\public\app.js: $('#authSubtitle').textContent=reg?'Create a private workspace for your investigations.':'Sign in to access your private investigation workspace.';
+\public\app.js: if(!db.cases.length){const c={id:uid(),name:'My first investigation',description:'A workspace for verified public-source research.',created:new Date().toISOString(),entities:[],findings:[],links:[]};db.cases.push(c);await api('/workspace',{method:'PUT',body:JSON.stringify({workspace:db})});}
+\public\index.html: <aside class="sidebar">
+\public\index.html: <button class="nav" data-view="cases">▤ <span>Investigation Cases</span></button>
+\public\index.html: <button class="nav" data-view="graph">⌘ <span>Relationship Graph</span></button>
+\public\index.html: <button class="nav" data-view="analytics">▥ <span>Analytics</span></button>
+\public\index.html: <button class="nav" data-view="settings">⚙ <span>Data & Export</span></button>
+\public\index.html: <p id="authSubtitle">Sign in to access your private investigation workspace.</p>
+
+SOURCE HASHES:
+server.cjs | 6990EE7FC3A4251055BB29865E21949A34055900DFA2E121B6CDFBA37383CA38
+app.js | D014912DFAD0C3BFAEB24EA4BDAD40284F1D05DE7A6A4A4709835F221FF9EB69
+index.html | D8DECF895FFE9753AC8DCB855A93970A2D8D51F083938C85DA7107700C730C58
+style.css | 63A79AF9AA933DDB6802C2ACBEFDC476B77357AA800A75C6C74F2386E8123E7D
